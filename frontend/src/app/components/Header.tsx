@@ -22,8 +22,6 @@ export default function Header({ onLocationClick, showNotice }: HeaderProps) {
 
   return (
     <div className="w-full h-[68px] bg-[#18181b] pt-[12px] pb-[12px] flex justify-between pr-[88px] pl-[88px] relative">
-      
-      {/* Logo */}
       <div className="flex flex-row gap-[12px]">
         <img src="/logo.png" alt="Logo" className="w-[46px] h-[37.29px]" />
         <div className="flex flex-col">
@@ -35,10 +33,8 @@ export default function Header({ onLocationClick, showNotice }: HeaderProps) {
         </div>
       </div>
 
-      {/* Right side */}
       <div className="flex flex-row gap-[12.81px]">
-        
-        {/* Delivery address */}
+
         <div
           onClick={onLocationClick}
           className="w-[251px] h-[36px] bg-[#ffffff] rounded-full flex flex-row p-[7px] gap-[4px] cursor-pointer"
@@ -51,7 +47,6 @@ export default function Header({ onLocationClick, showNotice }: HeaderProps) {
           <ChevronRight className="text-[#71717a]" />
         </div>
 
-        {/* Cart */}
         <div
           onClick={() => setCartOpen(true)}
           className="w-[36px] h-[36px] bg-[#f4f4f5] rounded-full p-[10px] cursor-pointer"
@@ -59,7 +54,6 @@ export default function Header({ onLocationClick, showNotice }: HeaderProps) {
           <ShoppingCart className="w-[16px] h-[16px] text-[#18181b]" />
         </div>
 
-        {/* User */}
         <DropdownMenu>
           <DropdownMenuTrigger> 
             <div className="w-[36px] h-[36px] bg-[#ef4444] rounded-full p-[10px]">
@@ -77,13 +71,11 @@ export default function Header({ onLocationClick, showNotice }: HeaderProps) {
         </DropdownMenu>
       </div>
 
-      {/* Cart modal */}
       <CartInformation
         open={cartOpen}
         onClose={() => setCartOpen(false)}
       />
 
-      {/* Notification */}
       <AddToCartNotice show={showNotice ?? false} />
     </div>
   )
