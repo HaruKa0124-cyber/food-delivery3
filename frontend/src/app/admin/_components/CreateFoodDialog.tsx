@@ -148,6 +148,9 @@ export const CreateFoodDialog = () => {
   }, []);
 
   return (
+    <div className="flex flex-col gap-[15px]">
+      <div className="w-full bg-[#ffffff] h-[176px]"></div>
+      <div className="">
     <Dialog
       open={open}
       onOpenChange={(open) => {
@@ -315,5 +318,7 @@ export const CreateFoodDialog = () => {
         </Form>
       </DialogContent>
     </Dialog>
+    </div>
+    </div>
   );
 };

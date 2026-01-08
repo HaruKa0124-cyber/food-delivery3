@@ -2,31 +2,22 @@
 
 import * as React from "react"
 import {
+  ColumnDef,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -35,131 +26,171 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useState } from "react"
+import { ChangeDeliveryState } from "@/app/components/ChangeDeliveryState"
 
-const data: Payment[] = [
+interface OrdersPage {
+  onLocationClick?: () => void
+  showNotice?: boolean
+}
+
+
+export type Order = {
+  id: number
+  customer: string
+  food: string
+  date: string
+  total: string
+  address: string
+  deliveryState: "Pending" | "Delivered" | "Cancelled"
+}
+
+
+const data: Order[] = [
   {
-    id: "abcdefghigklmnv",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
+    id: 1,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "12-р хороо, СБД",
+    deliveryState: "Pending",
   },
   {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com",
+    id: 2,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "БГД, 5-р хороо",
+    deliveryState: "Delivered",
   },
   {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com",
+    id: 3,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "СБД, 12-р хороо",
+    deliveryState: "Cancelled",
   },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@example.com",
+    {
+    id: 4,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "СБД, 12-р хороо",
+    deliveryState: "Cancelled",
   },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com",
+    {
+    id: 5,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "СБД, 12-р хороо",
+    deliveryState: "Cancelled",
+  },
+    {
+    id: 6,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "СБД, 12-р хороо",
+    deliveryState: "Cancelled",
+  },
+    {
+    id: 7,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "СБД, 12-р хороо",
+    deliveryState: "Cancelled",
+  },
+    {
+    id: 8,
+    customer: "Test@gmail.com",
+    food: "2 foods",
+    date: "2024/12/20",
+    total: "$26.97",
+    address: "СБД, 12-р хороо",
+    deliveryState: "Cancelled",
   },
 ]
 
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Order>[] = [
   {
     id: "select",
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) =>
+          table.toggleAllPageRowsSelected(!!value)
         }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
       />
     ),
-    enableSorting: false,
-    enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    accessorKey: "id",
+    header: "№",
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    accessorKey: "customer",
+    header: "Customer",
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "food",
+    header: "Food",
+  },
+  {
+    accessorKey: "date",
+    header: "Date",
+  },
+  {
+    accessorKey: "total",
+    header: "Total",
+  },
+  {
+    accessorKey: "address",
+    header: "Delivery Address",
+  },
+  {
+    accessorKey: "deliveryState",
+    header: "Delivery state",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
+      const state = row.getValue("deliveryState") as string
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
+      const color =
+        state === "Delivered"
+          ? "border-green-500 text-green-600"
+          : state === "Cancelled"
+          ? "border-gray-400 text-gray-500"
+          : "border-red-400 text-red-500"
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+            <button
+              className={`flex items-center gap-1 rounded-full border px-3 py-1 text-sm ${color}`}
             >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+              {state}
+              <ChevronDown size={14} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Pending</DropdownMenuItem>
+            <DropdownMenuItem>Delivered</DropdownMenuItem>
+            <DropdownMenuItem>Cancelled</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -167,146 +198,94 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ]
 
-export default function OrdersPage() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-
+export default function OrdersPage({}: OrdersPage) {
+  const [cartOpen, setCartOpen] = useState(false)
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
   })
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="w-full pt-[120px] pl-[15px] pr-[20px]">
+    <div className="rounded-xl bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">Orders</h2>
+          <p className="text-sm text-muted-foreground">32 items</p>
+        </div>
+
+        <Button
+        onClick={() => setCartOpen(true)}
+        className="rounded-full">
+          Change delivery state
+          <span className="ml-2 rounded-full bg-white px-2 text-xs text-black">
+            1
+          </span>
+        </Button>
       </div>
-      <div className="overflow-hidden rounded-md border">
+
+      <div className="rounded-lg border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="text-xs text-muted-foreground"
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                className="hover:bg-muted/40"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2">
+      <div className="mt-4 flex justify-end gap-2">
+        {Array.from({ length: table.getPageCount() }).map((_, i) => (
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            key={i}
+            size="icon"
+            variant={
+              table.getState().pagination.pageIndex === i
+                ? "default"
+                : "outline"
+            }
+            onClick={() => table.setPageIndex(i)}
           >
-            Previous
+            {i + 1}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+        ))}
       </div>
+    </div>
+<ChangeDeliveryState
+  open={cartOpen}
+  onClose={() => setCartOpen(false)}
+/>
     </div>
   )
 }

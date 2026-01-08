@@ -53,14 +53,12 @@ export default function MenuContainer({ setShowNotice }: { setShowNotice: (val: 
       <div className="w-[1264px] flex flex-col gap-[54px]">
         {categories.map((category, i) => (
           <div key={i} className="flex flex-col gap-[24px]">
-            {/* Category title with route */}
             <Link href={`/category/${encodeURIComponent(category.name)}`}>
               <p className="text-[30px] text-white cursor-pointer hover:text-red-500">
                 {category.name}
               </p>
             </Link>
 
-            {/* Cards */}
             <div className="flex flex-wrap gap-[36px]">
               {category.cards.map((card, idx) => (
                 <FoodCard
